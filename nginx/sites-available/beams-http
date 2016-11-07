@@ -1,0 +1,64 @@
+##
+
+#Beams v0.2.x (Beta)
+#Copyright (c) 2014-2016 Peter McKay
+#Free to use under the MIT license.
+
+# A plain ol' http server for testing or temporary use if needed prior to setup of https...
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+  server_name _;
+  root /var/www;
+  index index.html;
+
+  location / {
+
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+
+		try_files $uri $uri/ =404;
+	}
+
+
+  #Some simple rules for public caching, cache expiration...
+
+  #Images...
+
+  location /img/* {
+    add_header Cache-Control "public";
+    expires 10d;
+    access_log off;
+  }
+
+  #Video...
+  location /video/* {
+    add_header Cache-Control "public";
+    expires 10d;
+    access_log off;
+  }
+
+  #CSS files...
+  location /css/* {
+    add_header Cache-Control "public";
+    expires 10d;
+    access_log off;
+  }
+
+  #Client-side JS files...
+  location /js/* {
+    add_header Cache-Control "public";
+    expires 10d;
+    access_log off;
+  }
+
+}
+
+#Redirecting HTTPS requests to vanilla HTTP...
+
+server {
+  listen 443;
+  listen [::]:443;
+  return 301 http://$host$request_uri;
+}
